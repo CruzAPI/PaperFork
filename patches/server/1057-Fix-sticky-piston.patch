@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CruzAPI <guilhermecruz1574@gmail.com>
+Date: Thu, 18 Apr 2024 18:14:14 -0300
+Subject: [PATCH] Fix sticky piston
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+index be74adc86f0ca467f3b59e7b57fd47a8f381d86e..2194bcf59f27157caf72166651147dc857c92ed5 100644
+--- a/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
++++ b/src/main/java/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+@@ -251,10 +251,8 @@ public class PistonBaseBlock extends DirectionalBlock {
+             BlockState iblockdata2 = (BlockState) ((BlockState) Blocks.MOVING_PISTON.defaultBlockState().setValue(MovingPistonBlock.FACING, enumdirection)).setValue(MovingPistonBlock.TYPE, this.isSticky ? PistonType.STICKY : PistonType.DEFAULT);
+ 
+             // Paper start - Fix sticky pistons and BlockPistonRetractEvent; Move empty piston retract call to fix multiple event fires
+-            if (!this.isSticky) {
+-                if (!new BlockPistonRetractEvent(CraftBlock.at(world, pos), java.util.Collections.emptyList(), CraftBlock.notchToBlockFace(enumdirection)).callEvent()) {
+-                    return false;
+-                }
++            if (!new BlockPistonRetractEvent(CraftBlock.at(world, pos), java.util.Collections.emptyList(), CraftBlock.notchToBlockFace(enumdirection)).callEvent()) {
++                return false;
+             }
+             // Paper end - Fix sticky pistons and BlockPistonRetractEvent
+             world.setBlock(pos, iblockdata2, 20);
