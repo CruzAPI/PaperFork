@@ -5,10 +5,10 @@ Subject: [PATCH] Fix MC-117075: Block entity unload lag spike
 
 
 diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
-index 7800276dea6176ed489809d589b850252fc9333b..79588b6535eb6e0d21bedc1fc5e939903b450e2f 100644
+index 4fcbea7b8b12be10157da0c1f35c06e47c0334ad..ab511f4c056f07aa79aab7b662073bb8db4b1526 100644
 --- a/src/main/java/net/minecraft/world/level/Level.java
 +++ b/src/main/java/net/minecraft/world/level/Level.java
-@@ -730,6 +730,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -726,6 +726,8 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
          boolean flag = this.tickRateManager().runsNormally();
  
          int tilesThisCycle = 0;
@@ -17,7 +17,7 @@ index 7800276dea6176ed489809d589b850252fc9333b..79588b6535eb6e0d21bedc1fc5e93990
          for (tileTickPosition = 0; tileTickPosition < this.blockEntityTickers.size(); tileTickPosition++) { // Paper - Disable tick limiters
              this.tileTickPosition = (this.tileTickPosition < this.blockEntityTickers.size()) ? this.tileTickPosition : 0;
              TickingBlockEntity tickingblockentity = (TickingBlockEntity) this.blockEntityTickers.get(this.tileTickPosition);
-@@ -738,12 +740,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+@@ -734,12 +736,13 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
              if (tickingblockentity.isRemoved()) {
                  // Spigot start
                  tilesThisCycle--;

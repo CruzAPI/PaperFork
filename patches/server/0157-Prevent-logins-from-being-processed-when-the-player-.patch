@@ -6,10 +6,10 @@ Subject: [PATCH] Prevent logins from being processed when the player has
 
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-index c01596f87efd316816b597b83c3cac1dbddc22c2..abfeaa9485b71d0b802c41bfd8e113d0bc9e9773 100644
+index d1a05c93ba7b9d1cb3427a4a90346b4364784846..3bcce44fd8f7964a2f9b0d9c778b995975a8c049 100644
 --- a/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -81,7 +81,9 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
+@@ -104,7 +104,9 @@ public class ServerLoginPacketListenerImpl implements ServerLoginPacketListener,
          }
          // Paper end - Do not allow logins while the server is shutting down
          if (this.state == ServerLoginPacketListenerImpl.State.VERIFYING) {
@@ -18,4 +18,4 @@ index c01596f87efd316816b597b83c3cac1dbddc22c2..abfeaa9485b71d0b802c41bfd8e113d0
 +            } // Paper - prevent logins to be processed even though disconnect was called
          }
  
-         if (this.state == ServerLoginPacketListenerImpl.State.WAITING_FOR_DUPE_DISCONNECT && !this.isPlayerAlreadyInWorld((GameProfile) Objects.requireNonNull(this.authenticatedProfile))) {
+         // CraftBukkit start

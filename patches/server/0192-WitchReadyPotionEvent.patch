@@ -5,27 +5,27 @@ Subject: [PATCH] WitchReadyPotionEvent
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Witch.java b/src/main/java/net/minecraft/world/entity/monster/Witch.java
-index 96a87db9f8976d3f1ff09beb9598db31fff72d5b..25a1edf64602a13c07779e58b167a8471019588e 100644
+index a14e00d55930628333cc63b18727ea56dbdc4ee3..f6d01d21745391595d61b191832be4c28a3e58cb 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Witch.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Witch.java
-@@ -160,7 +160,11 @@ public class Witch extends Raider implements RangedAttackMob {
+@@ -151,7 +151,11 @@ public class Witch extends Raider implements RangedAttackMob {
                  }
  
-                 if (potionregistry != null) {
--                    this.setItemSlot(EquipmentSlot.MAINHAND, PotionUtils.setPotion(new ItemStack(Items.POTION), potionregistry));
+                 if (holder != null) {
+-                    this.setItemSlot(EquipmentSlot.MAINHAND, PotionContents.createItemStack(Items.POTION, holder));
 +                    // Paper start
-+                    ItemStack potion = PotionUtils.setPotion(new ItemStack(Items.POTION), potionregistry);
++                    ItemStack potion = PotionContents.createItemStack(Items.POTION, holder);
 +                    potion = org.bukkit.craftbukkit.event.CraftEventFactory.handleWitchReadyPotionEvent(this, potion);
 +                    this.setItemSlot(EquipmentSlot.MAINHAND, potion);
 +                    // Paper end
-                     this.usingTime = this.getMainHandItem().getUseDuration();
+                     this.usingTime = this.getMainHandItem().getUseDuration(this);
                      this.setUsingItem(true);
                      if (!this.isSilent()) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-index 2bcac771a37b3e5d3b7173e24dad7823fb29757c..203b6539c55b74484cff476b6472f44ed56112c9 100644
+index 91180d7ad705ca97c0df43debc14b204127165d0..e3af0db8082e4e90902197f96f1c833405bf5f63 100644
 --- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
-@@ -1902,4 +1902,14 @@ public class CraftEventFactory {
+@@ -1976,4 +1976,14 @@ public class CraftEventFactory {
          ).callEvent();
      }
      // Paper end - PlayerUseUnknownEntityEvent

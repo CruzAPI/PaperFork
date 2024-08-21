@@ -16,10 +16,10 @@ Also adds isCommand and getLocation to the sync TabCompleteEvent
 Co-authored-by: Aikar <aikar@aikar.co>
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index fa8db93541dc62dc61bccc53c1aaeb3666d80ee1..5d4730b9ced378c1e77d7734f2f8aba6d09a19d0 100644
+index 7906e163f8d03ba39480526d0293ad48534f11bf..ec80a9138260497d0deccf3ade3f44fc849de1d5 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -688,21 +688,58 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+@@ -711,21 +711,58 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
  
      }
  
@@ -80,10 +80,10 @@ index fa8db93541dc62dc61bccc53c1aaeb3666d80ee1..5d4730b9ced378c1e77d7734f2f8aba6
  
          this.server.getCommands().getDispatcher().getCompletionSuggestions(parseresults).thenAccept((suggestions) -> {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b6e6b4213e893fac64855cc4b4e6eeb4246050d1..28a8b687958a1c1396a5a8b13a04fb371ac9f3ab 100644
+index 4280bd6288ce9522d041ec2dc2105d3908514a2f..5d8eb3b728359be5f92a255c9637d71713403cc8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -2239,7 +2239,7 @@ public final class CraftServer implements Server {
+@@ -2292,7 +2292,7 @@ public final class CraftServer implements Server {
              offers = this.tabCompleteChat(player, message);
          }
  

@@ -60,23 +60,18 @@ index 0000000000000000000000000000000000000000..d926ad804355ee2fdc5910b2505e8671
 +}
 diff --git a/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java b/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..6b0bdc266109cdfb874f08bf74323603921d2260
+index 0000000000000000000000000000000000000000..874dcbefea469440a9028ddc399a37c929429f62
 --- /dev/null
 +++ b/src/main/java/com/destroystokyo/paper/network/StandardPaperServerListPingEventImpl.java
-@@ -0,0 +1,116 @@
+@@ -0,0 +1,97 @@
 +package com.destroystokyo.paper.network;
 +
-+import com.destroystokyo.paper.profile.CraftPlayerProfile;
-+import com.destroystokyo.paper.profile.PlayerProfile;
-+import com.google.common.base.MoreObjects;
-+import com.google.common.base.Strings;
 +import com.mojang.authlib.GameProfile;
 +import io.papermc.paper.adventure.AdventureComponent;
 +import java.util.ArrayList;
 +import java.util.Collections;
 +import java.util.List;
 +import java.util.Optional;
-+import java.util.UUID;
 +import javax.annotation.Nonnull;
 +import net.minecraft.network.Connection;
 +import net.minecraft.network.chat.Component;
@@ -87,9 +82,6 @@ index 0000000000000000000000000000000000000000..6b0bdc266109cdfb874f08bf74323603
 +
 +public final class StandardPaperServerListPingEventImpl extends PaperServerListPingEventImpl {
 +
-+    // private static final GameProfile[] EMPTY_PROFILES = new GameProfile[0];
-+    private static final UUID FAKE_UUID = new UUID(0, 0);
-+
 +    private List<GameProfile> originalSample;
 +
 +    private StandardPaperServerListPingEventImpl(MinecraftServer server, Connection networkManager, ServerStatus ping) {
@@ -99,12 +91,12 @@ index 0000000000000000000000000000000000000000..6b0bdc266109cdfb874f08bf74323603
 +
 +    @Nonnull
 +    @Override
-+    public List<PlayerProfile> getPlayerSample() {
-+        List<PlayerProfile> sample = super.getPlayerSample();
++    public List<ListedPlayerInfo> getListedPlayers() {
++        List<ListedPlayerInfo> sample = super.getListedPlayers();
 +
 +        if (this.originalSample != null) {
 +            for (GameProfile profile : this.originalSample) {
-+                sample.add(CraftPlayerProfile.asBukkitCopy(profile));
++                sample.add(new ListedPlayerInfo(profile.getName(), profile.getId()));
 +            }
 +            this.originalSample = null;
 +        }
@@ -117,25 +109,14 @@ index 0000000000000000000000000000000000000000..6b0bdc266109cdfb874f08bf74323603
 +            return this.originalSample;
 +        }
 +
-+        List<PlayerProfile> entries = super.getPlayerSample();
++        List<ListedPlayerInfo> entries = super.getListedPlayers();
 +        if (entries.isEmpty()) {
 +            return Collections.emptyList();
 +        }
 +
 +        final List<GameProfile> profiles = new ArrayList<>();
-+        for (PlayerProfile profile : entries) {
-+            /*
-+             * Avoid null UUIDs/names since that will make the response invalid
-+             * on the client.
-+             * Instead, fall back to a fake/empty UUID and an empty string as name.
-+             * This can be used to create custom lines in the player list that do not
-+             * refer to a specific player.
-+             */
-+            if (profile.getId() != null && profile.getName() != null) {
-+                profiles.add(CraftPlayerProfile.asAuthlib(profile));
-+            } else {
-+                profiles.add(new GameProfile(MoreObjects.firstNonNull(profile.getId(), FAKE_UUID), Strings.nullToEmpty(profile.getName())));
-+            }
++        for (ListedPlayerInfo playerInfo : entries) {
++            profiles.add(new GameProfile(playerInfo.id(), playerInfo.name()));
 +        }
 +        return profiles;
 +    }
@@ -146,7 +127,7 @@ index 0000000000000000000000000000000000000000..6b0bdc266109cdfb874f08bf74323603
 +
 +        // Close connection immediately if event is cancelled
 +        if (event.isCancelled()) {
-+            networkManager.disconnect(null);
++            networkManager.disconnect((Component) null);
 +            return;
 +        }
 +
@@ -181,7 +162,7 @@ index 0000000000000000000000000000000000000000..6b0bdc266109cdfb874f08bf74323603
 +
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 22b9d4bebee30877225b08b46cec6084b12a9c5a..09bd8a6576647c612e9d7f807780b1e20478a534 100644
+index e464349a46eab23eb5b8d4d31f577d78532b3ce1..7f4c9ba88c2d33c2cc23e406a616f9eb35d738ce 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -3,6 +3,9 @@ package net.minecraft.server;
@@ -194,7 +175,7 @@ index 22b9d4bebee30877225b08b46cec6084b12a9c5a..09bd8a6576647c612e9d7f807780b1e2
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-@@ -1433,7 +1436,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1517,7 +1520,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          if (this.hidesOnlinePlayers()) {
              return new ServerStatus.Players(i, list.size(), List.of());
          } else {
@@ -204,10 +185,10 @@ index 22b9d4bebee30877225b08b46cec6084b12a9c5a..09bd8a6576647c612e9d7f807780b1e2
              int k = Mth.nextInt(this.random, 0, list.size() - j);
  
 diff --git a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-index 7dd3dfd2ccc820d45849a89707239b7dbcaf44c3..e5006e7672ba79ed4bcf2c4173c5a9ed4c68395b 100644
+index f08700abb005f487aca95c0457c09cefa9a81be2..532f09089b8d6798999cf3f83e852df7479e450e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -48,6 +48,8 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
+@@ -49,6 +49,8 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
              this.connection.disconnect(ServerStatusPacketListenerImpl.DISCONNECT_REASON);
          } else {
              this.hasRequestedStatus = true;
@@ -216,7 +197,7 @@ index 7dd3dfd2ccc820d45849a89707239b7dbcaf44c3..e5006e7672ba79ed4bcf2c4173c5a9ed
              // CraftBukkit start
              // this.connection.send(new PacketStatusOutServerInfo(this.status));
              MinecraftServer server = MinecraftServer.getServer();
-@@ -150,6 +152,9 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
+@@ -151,6 +153,9 @@ public class ServerStatusPacketListenerImpl implements ServerStatusPacketListene
  
              this.connection.send(new ClientboundStatusResponsePacket(ping));
              // CraftBukkit end
@@ -227,10 +208,10 @@ index 7dd3dfd2ccc820d45849a89707239b7dbcaf44c3..e5006e7672ba79ed4bcf2c4173c5a9ed
      }
  
 diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
-index 0f391af1274926ef6316bd06458767a27640f54a..9c5c19ab9dc14d844631f47a93f3349409efdf43 100644
+index d9e73e37b54e2f6e13313977c76cb4212c240992..b97ff4a9b69699577bf8cde0869b70353101ef46 100644
 --- a/src/main/java/org/spigotmc/SpigotConfig.java
 +++ b/src/main/java/org/spigotmc/SpigotConfig.java
-@@ -289,7 +289,7 @@ public class SpigotConfig
+@@ -285,7 +285,7 @@ public class SpigotConfig
      public static int playerSample;
      private static void playerSample()
      {

@@ -9,10 +9,10 @@ Adds missing call to Illagers and also adds Arrow ItemStack to skeletons
 public net.minecraft.world.entity.projectile.AbstractArrow getPickupItem()Lnet.minecraft.world.item.ItemStack;
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java b/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java
-index 8a668d36bafa5ba172b0ce510b46096ec2fd116a..dadb419a04b343d6ba59353c6caa1a50aa07b67f 100644
+index 1bf013a10502395d9f432f80c517d5c9a50f5eab..aec440d32eb97fa8ce738b98dae1cdc346e8a59b 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/AbstractSkeleton.java
-@@ -201,7 +201,7 @@ public abstract class AbstractSkeleton extends Monster implements RangedAttackMo
+@@ -205,7 +205,7 @@ public abstract class AbstractSkeleton extends Monster implements RangedAttackMo
  
          entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));
          // CraftBukkit start
@@ -22,10 +22,10 @@ index 8a668d36bafa5ba172b0ce510b46096ec2fd116a..dadb419a04b343d6ba59353c6caa1a50
              event.getProjectile().remove();
              return;
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Illusioner.java b/src/main/java/net/minecraft/world/entity/monster/Illusioner.java
-index 421ed4daed9a61b9e9395538ff36606b196ca1f1..fb84b35e34063075e69e00e430bc00e7c3b9d62c 100644
+index 93e3454de0b0d62895f165b0772526f3eae1e333..c858556ea457931aa14e338e20672cb50cb19f0e 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Illusioner.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Illusioner.java
-@@ -196,8 +196,18 @@ public class Illusioner extends SpellcasterIllager implements RangedAttackMob {
+@@ -185,8 +185,18 @@ public class Illusioner extends SpellcasterIllager implements RangedAttackMob {
          double d3 = Math.sqrt(d0 * d0 + d2 * d2);
  
          entityarrow.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, (float) (14 - this.level().getDifficulty().getId() * 4));

@@ -5,17 +5,17 @@ Subject: [PATCH] Add PlayerArmorChangeEvent
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index 589fba7264d8041e6f766779fe8e3d5071398fed..96805bc64fd3593373ba9eecf29bd13d33d9e053 100644
+index f297b2227d0793f44cb5770aa24a474ec7283b15..21d00a73ad8287d61eda1ab91b88ea3264aff021 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-@@ -3068,6 +3068,13 @@ public abstract class LivingEntity extends Entity implements Attackable {
-             ItemStack itemstack1 = this.getItemBySlot(enumitemslot);
+@@ -3168,6 +3168,13 @@ public abstract class LivingEntity extends Entity implements Attackable {
+             ItemStack itemstack2 = this.getItemBySlot(enumitemslot);
  
-             if (this.equipmentHasChanged(itemstack, itemstack1)) {
+             if (this.equipmentHasChanged(itemstack1, itemstack2)) {
 +                // Paper start - PlayerArmorChangeEvent
-+                if (this instanceof ServerPlayer && enumitemslot.getType() == EquipmentSlot.Type.ARMOR) {
-+                    final org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack);
-+                    final org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(itemstack1);
++                if (this instanceof ServerPlayer && enumitemslot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
++                    final org.bukkit.inventory.ItemStack oldItem = CraftItemStack.asBukkitCopy(itemstack1);
++                    final org.bukkit.inventory.ItemStack newItem = CraftItemStack.asBukkitCopy(itemstack2);
 +                    new com.destroystokyo.paper.event.player.PlayerArmorChangeEvent((Player) this.getBukkitEntity(), com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType.valueOf(enumitemslot.name()), oldItem, newItem).callEvent();
 +                }
 +                // Paper end - PlayerArmorChangeEvent

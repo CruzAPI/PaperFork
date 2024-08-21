@@ -9,10 +9,10 @@ from triggering monster spawns on a server.
 Also a highly more effecient way to blanket block spawns in a world
 
 diff --git a/src/main/java/net/minecraft/server/level/ChunkMap.java b/src/main/java/net/minecraft/server/level/ChunkMap.java
-index 97bb0fc7e890273f2f975f137ec1194a1a83fde7..2a0e81a3ec0774ad98e2d74ac7672c167e28f38e 100644
+index d60c70d59d0a6ef21224c597c9015cb3f51dabb8..63bcd7698fdb86366441dacedbb616771f6b1a3d 100644
 --- a/src/main/java/net/minecraft/server/level/ChunkMap.java
 +++ b/src/main/java/net/minecraft/server/level/ChunkMap.java
-@@ -1203,7 +1203,9 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1037,7 +1037,9 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
          chunkRange = (chunkRange > this.level.spigotConfig.viewDistance) ? (byte) this.level.spigotConfig.viewDistance : chunkRange;
          chunkRange = (chunkRange > 8) ? 8 : chunkRange;
  
@@ -23,7 +23,7 @@ index 97bb0fc7e890273f2f975f137ec1194a1a83fde7..2a0e81a3ec0774ad98e2d74ac7672c16
          // Spigot end
          if (!this.distanceManager.hasPlayersNearby(chunkcoordintpair.toLong())) {
              return false;
-@@ -1218,6 +1220,15 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
+@@ -1052,6 +1054,15 @@ public class ChunkMap extends ChunkStorage implements ChunkHolder.PlayerProvider
                  }
  
                  entityplayer = (ServerPlayer) iterator.next();
@@ -40,10 +40,10 @@ index 97bb0fc7e890273f2f975f137ec1194a1a83fde7..2a0e81a3ec0774ad98e2d74ac7672c16
  
              return true;
 diff --git a/src/main/java/net/minecraft/server/level/ServerChunkCache.java b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-index e0ae7274da59ff043cd423d282ed8db0382561d4..369e4bf5ff52cb774f1acaf760b8bd276a0745f5 100644
+index e0c8b89767087cba34fc3c3809db4c386dacb193..a939bad7da9c852827a2d67d9ace5d0df4911a31 100644
 --- a/src/main/java/net/minecraft/server/level/ServerChunkCache.java
 +++ b/src/main/java/net/minecraft/server/level/ServerChunkCache.java
-@@ -568,6 +568,15 @@ public class ServerChunkCache extends ChunkSource {
+@@ -461,6 +461,15 @@ public class ServerChunkCache extends ChunkSource {
                  boolean flag = this.level.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING) && !this.level.players().isEmpty(); // CraftBukkit
  
                  Util.shuffle(list, this.level.random);
@@ -60,13 +60,13 @@ index e0ae7274da59ff043cd423d282ed8db0382561d4..369e4bf5ff52cb774f1acaf760b8bd27
                  boolean flag1 = this.level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) != 0L && this.level.getLevelData().getGameTime() % this.level.ticksPerSpawnCategory.getLong(org.bukkit.entity.SpawnCategory.ANIMAL) == 0L; // CraftBukkit
                  Iterator iterator1 = list.iterator();
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 54f343a1979794781757b221514f70aa0f7a5dec..98d229fb8f342775482f2ed199265bda3f043a96 100644
+index a049a54ee70839706787f8de661ca6e6b1f54071..db72318d822b876eb937f0f0f7f2b2139fb77df7 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -265,6 +265,7 @@ public class ServerPlayer extends Player {
+@@ -286,6 +286,7 @@ public class ServerPlayer extends net.minecraft.world.entity.player.Player {
+     public String kickLeaveMessage = null; // SPIGOT-3034: Forward leave message to PlayerQuitEvent
      // CraftBukkit end
      public boolean isRealPlayer; // Paper
-     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
 +    public com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper - PlayerNaturallySpawnCreaturesEvent
  
      public ServerPlayer(MinecraftServer server, ServerLevel world, GameProfile profile, ClientInformation clientOptions) {

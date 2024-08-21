@@ -83,7 +83,7 @@ index 995c77ee53347328bfd0ad66fcc1b39589967476..5b2af80e584977683cd39e6f440e65a7
      public CraftIllusioner(CraftServer server, net.minecraft.world.entity.monster.Illusioner entity) {
          super(server, entity);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLlama.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLlama.java
-index dfd4cf1e613b7ccf3ad986f8e0d783593a411194..9986ac517e11b076a29a8c8e3f480ec286fa5825 100644
+index 189b5ac97f3354b8dea082c2acef242f8ff2f002..bf297388c75521266c93580a9caafe6bad70ab45 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLlama.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLlama.java
 @@ -8,7 +8,7 @@ import org.bukkit.entity.Llama;

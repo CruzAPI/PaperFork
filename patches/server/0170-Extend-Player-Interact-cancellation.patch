@@ -10,7 +10,7 @@ Flower pots are also not updated on the client when interaction is cancelled, th
 also resolves this.
 
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
-index 45236a077d798d6a257a2e982b58901167ecd06e..a8d33286832786031ac57e6ce27d5181e1a3d9b1 100644
+index 2fab84c5e2dc4de39281956390588a9a71d02f68..a5b0efd6142075ca1ecb604afbc1d0162199e7a4 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayerGameMode.java
 @@ -519,7 +519,11 @@ public class ServerPlayerGameMode {
@@ -18,10 +18,10 @@ index 45236a077d798d6a257a2e982b58901167ecd06e..a8d33286832786031ac57e6ce27d5181
                  // send a correcting update to the client for the block above as well, this because of replaceable blocks (such as grass, sea grass etc)
                  player.connection.send(new ClientboundBlockUpdatePacket(world, blockposition.above()));
 +            // Paper start - extend Player Interact cancellation // TODO: consider merging this into the extracted method
-+            } else if (iblockdata.is(Blocks.STRUCTURE_BLOCK) || iblockdata.getBlock() instanceof net.minecraft.world.level.block.CommandBlock) {
++            } else if (iblockdata.is(Blocks.JIGSAW) || iblockdata.is(Blocks.STRUCTURE_BLOCK) || iblockdata.getBlock() instanceof net.minecraft.world.level.block.CommandBlock) {
 +                player.connection.send(new net.minecraft.network.protocol.game.ClientboundContainerClosePacket(this.player.containerMenu.containerId));
              }
 +            // Paper end - extend Player Interact cancellation
              player.getBukkitEntity().updateInventory(); // SPIGOT-2867
-             enuminteractionresult = (event.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+             return (event.useItemInHand() != Event.Result.ALLOW) ? InteractionResult.SUCCESS : InteractionResult.PASS;
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {

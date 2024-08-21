@@ -6,10 +6,10 @@ Subject: [PATCH] Unset Ignited flag on cancel of Explosion Event
 Otherwise the creeper infinite explodes
 
 diff --git a/src/main/java/net/minecraft/world/entity/monster/Creeper.java b/src/main/java/net/minecraft/world/entity/monster/Creeper.java
-index 79614aaa4832c969443d6393e7d5bb8a622a5d98..83b407e865e2ff4debb89c350727809601be1fa6 100644
+index 39486215ac080220a6018a35a8437092dbc8fe9d..95df4ac539ec284654c53d39955870a46478c27d 100644
 --- a/src/main/java/net/minecraft/world/entity/monster/Creeper.java
 +++ b/src/main/java/net/minecraft/world/entity/monster/Creeper.java
-@@ -279,6 +279,7 @@ public class Creeper extends Monster implements PowerableMob {
+@@ -278,6 +278,7 @@ public class Creeper extends Monster implements PowerableMob {
              // CraftBukkit start
              } else {
                  this.swell = 0;

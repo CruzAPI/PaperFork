@@ -5,7 +5,7 @@ Subject: [PATCH] Add PlayerAdvancementCriterionGrantEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/PlayerAdvancements.java b/src/main/java/net/minecraft/server/PlayerAdvancements.java
-index dbd5f1d052348d6adae8b13ae1f2686553b7a4bf..c61789a2df774761feb79123d31eab75f9996bf2 100644
+index 81bef7427478fe911e81f024102654d8d540dbb7..4c85abf29441645039b6a554a50e1d3274229de6 100644
 --- a/src/main/java/net/minecraft/server/PlayerAdvancements.java
 +++ b/src/main/java/net/minecraft/server/PlayerAdvancements.java
 @@ -225,6 +225,12 @@ public class PlayerAdvancements {

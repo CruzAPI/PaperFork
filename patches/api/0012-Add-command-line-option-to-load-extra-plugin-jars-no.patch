@@ -7,10 +7,10 @@ Subject: [PATCH] Add command line option to load extra plugin jars not in the
 ex: java -jar paperclip.jar nogui -add-plugin=/path/to/plugin.jar -add-plugin=/path/to/another/plugin_jar.jar
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index 07d393152320270e38f495120dd19e35ece73149..026c1accb03bdd42981a2eaf9189d7b2fe6e7339 100644
+index 6ecab28705afc0e3652677b516d8a5398e8b2666..db51751d2dc1ac419e8fac32466ad3a7727fa2fe 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
-@@ -80,6 +80,20 @@ public final class Bukkit {
+@@ -83,6 +83,20 @@ public final class Bukkit {
          return server;
      }
  
@@ -32,10 +32,10 @@ index 07d393152320270e38f495120dd19e35ece73149..026c1accb03bdd42981a2eaf9189d7b2
       * Attempts to set the {@link Server} singleton.
       * <p>
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index baa02b5223769755670c611ca4d6acc7bf202116..523f5ac54f7662c7c96182a352236732d2d3b122 100644
+index f4b2ad91c7a46af5fc16f31369d155e4e3ab3aae..638e98416fdf7ac065abe058d625b1c924be5abb 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -65,6 +65,18 @@ import org.jetbrains.annotations.Nullable;
+@@ -68,6 +68,18 @@ import org.jetbrains.annotations.Nullable;
   */
  public interface Server extends PluginMessageRecipient, net.kyori.adventure.audience.ForwardingAudience { // Paper
  
@@ -55,10 +55,10 @@ index baa02b5223769755670c611ca4d6acc7bf202116..523f5ac54f7662c7c96182a352236732
       * Used for all administrative messages, such as an operator using a
       * command.
 diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-index 63389474a2b3f0e283b42e7004aa6a94904a3d17..974ff7116b294473ec450757e8a9341540f43dcd 100644
+index 6018574cd15b802833613beefa88da15dc2730cb..e7b1895d3918487d711afcbe41d76863d85c0a62 100644
 --- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
 +++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-@@ -116,9 +116,22 @@ public final class SimplePluginManager implements PluginManager {
+@@ -117,9 +117,22 @@ public final class SimplePluginManager implements PluginManager {
      @Override
      @NotNull
      public Plugin[] loadPlugins(@NotNull File directory) {

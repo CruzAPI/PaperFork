@@ -5,7 +5,7 @@ Subject: [PATCH] Print Error details when failing to save player data
 
 
 diff --git a/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java b/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java
-index 2a167a0131d866b4368fc30849c17acdf0ab9af0..49d39980054bce470ddaceeb6ab7fab83bf8dc54 100644
+index e11c8523e633d2a8e3cea7ecd54978b2958b9684..1d287dd7379e56f7fd4b425880b850cd843f5789 100644
 --- a/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/src/main/java/net/minecraft/world/level/storage/PlayerDataStorage.java
 @@ -47,7 +47,7 @@ public class PlayerDataStorage {

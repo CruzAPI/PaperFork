@@ -17,17 +17,19 @@ from networking or during connections flood of chunk packets on slower clients,
  at the cost of dead connections being kept open for longer.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-index 156cb6a00a2580eb16e05c80bc3267128b5804a3..d0f89a66734423ceea67fbeb99b0e72797f80e63 100644
+index 07d2e60bcd7d1f3ba2f8005ec496561b3648ae86..382920335337c8d0abd8b1f600fddd391249fe21 100644
 --- a/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
-@@ -48,12 +48,13 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
-     private static final Component TIMEOUT_DISCONNECTION_MESSAGE = Component.translatable("disconnect.timeout");
+@@ -69,7 +69,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      protected final MinecraftServer server;
      public final Connection connection; // Paper
+     private final boolean transferred;
 -    private long keepAliveTime;
 +    private long keepAliveTime = Util.getMillis(); // Paper
      private boolean keepAlivePending;
      private long keepAliveChallenge;
+     private long closedListenerTime;
+@@ -77,6 +77,7 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
      private int latency;
      private volatile boolean suspendFlushingOnServerThread = false;
      public final java.util.Map<java.util.UUID, net.kyori.adventure.resource.ResourcePackCallback> packCallbacks = new java.util.concurrent.ConcurrentHashMap<>(); // Paper - adventure resource pack callbacks
@@ -35,27 +37,23 @@ index 156cb6a00a2580eb16e05c80bc3267128b5804a3..d0f89a66734423ceea67fbeb99b0e727
  
      public ServerCommonPacketListenerImpl(MinecraftServer minecraftserver, Connection networkmanager, CommonListenerCookie commonlistenercookie, ServerPlayer player) { // CraftBukkit
          this.server = minecraftserver;
-@@ -183,18 +184,25 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
+@@ -227,18 +228,22 @@ public abstract class ServerCommonPacketListenerImpl implements ServerCommonPack
  
      protected void keepConnectionAlive() {
          this.server.getProfiler().push("keepAlive");
 -        long i = Util.getMillis();
--
--        if (i - this.keepAliveTime >= 25000L) { // CraftBukkit
--            if (this.keepAlivePending) {
 +        // Paper start - give clients a longer time to respond to pings as per pre 1.12.2 timings
 +        // This should effectively place the keepalive handling back to "as it was" before 1.12.2
 +        long currentTime = Util.getMillis();
 +        long elapsedTime = currentTime - this.keepAliveTime;
-+
-+        if (this.keepAlivePending) {
-+            if (!this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // check keepalive limit, don't fire if already disconnected
-+                ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked due to keepalive timeout!", this.player.getScoreboardName()); // more info
+ 
+-        if (!this.isSingleplayerOwner() && i - this.keepAliveTime >= 25000L) { // CraftBukkit
+-            if (this.keepAlivePending) {
++        if (!this.isSingleplayerOwner() && elapsedTime >= 15000L) { // Paper - use vanilla's 15000L between keep alive packets
++            if (this.keepAlivePending && !this.processedDisconnect && elapsedTime >= KEEPALIVE_LIMIT) { // Paper - check keepalive limit, don't fire if already disconnected
                  this.disconnect(ServerCommonPacketListenerImpl.TIMEOUT_DISCONNECTION_MESSAGE);
--            } else {
-+            }
-+        } else {
-+            if (elapsedTime >= 15000L) { // 15 seconds
+-            } else if (this.checkIfClosed(i)) {
++            } else if (this.checkIfClosed(currentTime)) { // Paper
                  this.keepAlivePending = true;
 -                this.keepAliveTime = i;
 -                this.keepAliveChallenge = i;
